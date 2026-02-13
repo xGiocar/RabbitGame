@@ -1,4 +1,5 @@
 eatable = [1]
 diggable = [3]
-hole = [4]
+hole = [4, 3]
 unpassable = [2, 5]
+slippery = [6]

@@ -17,12 +17,14 @@ class Level:
             2: 'boulder_tile.bmp',
             3: 'eaten_grass_tile.bmp',
             4: 'burrow_tile.bmp',
-            5: 'water_tile.bmp'
+            5: 'water_tile.bmp',
+            6: 'mud_tile.bmp'
         }
 
         self.items = {
             0: 'transparent.png',
-            1: 'fruit.bmp'
+            1: 'fruit.bmp',
+            2: 'win.bmp'
         }
 
     def load_from_file(self, path: str):

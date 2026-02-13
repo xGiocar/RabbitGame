@@ -5,17 +5,17 @@ from level import *
 from tile_types import *
 
 class Player:
-    def __init__(self, x: int, y: int, level: Level):
+    def __init__(self, level: Level):
         self.sprite = pygame.image.load('assets/player_sprite.png')
-        self.x = x
-        self.y = y
         self.level = level
+        self.x = level.startX
+        self.y = level.startY
         self.in_hole = False
+        self.last_direction = 'E'
+        self.change_level = False
 
     def update(self, screen: pygame.Surface):
         screen.blit(self.sprite, (self.x * 32, self.y * 32))
-        self.check_for_item()
-
 
     def move(self, dx=0, dy=0):
         test_x = self.x + dx
@@ -33,6 +33,8 @@ class Player:
 
         self.x = test_x
         self.y = test_y
+        self.check_for_item()
+        self.check_for_tile()
 
     def eat_grass(self):
         current_space = int(self.level.matrix[self.y][self.x])
@@ -40,7 +42,6 @@ class Player:
             self.level.matrix[self.y][self.x] = 3
 
     def dig_hole(self):
-
         current_space = int(self.level.matrix[self.y][self.x])
         if current_space in diggable:
             self.level.matrix[self.y][self.x] = 4
@@ -51,11 +52,10 @@ class Player:
             for j in range(self.x - MAX_DIGGABLE_DIST, self.x + MAX_DIGGABLE_DIST + 1):
                 if i < 0 or i >= self.level.height or j < 0 or j >= self.level.width:
                     continue
-                if self.level.matrix[i][j] == 4:
+                if self.level.matrix[i][j] in hole:
                     self.level.holes.append((i, j))
 
     def enter_hole(self):
-
         current_space = int(self.level.matrix[self.y][self.x])
         if current_space in hole:
             self.in_hole = True
@@ -77,10 +77,24 @@ class Player:
         text_surface = font.render(f"Current item: {item_id}", True, (0,0,0))
         self.level.screen.blit(text_surface, (0, 0))
 
-        if item_id == 0:
-            return
+        match item_id:
+            case 0:
+                return
+            case 1:
+                self.level.obj_matrix[self.y][self.x] = 0
+                self.x = self.x + 3
+            case 2:
+                self.change_level = True
 
-        elif item_id == 1:
-            self.level.obj_matrix[self.y][self.x] = 0
-            self.x = self.x + 3
-
+    def check_for_tile(self):
+        tile_id = int(self.level.matrix[self.y][self.x])
+        if tile_id in slippery:
+            match self.last_direction:
+                case 'N':
+                    self.move(dy=-1)
+                case 'S':
+                    self.move(dy=1)
+                case 'V':
+                    self.move(dx=-1)
+                case 'E':
+                    self.move(dx=1)
