@@ -52,14 +52,14 @@ class Player:
             for j in range(self.x - MAX_DIGGABLE_DIST, self.x + MAX_DIGGABLE_DIST + 1):
                 if i < 0 or i >= self.level.height or j < 0 or j >= self.level.width:
                     continue
-                if self.level.matrix[i][j] in hole:
+                if int(self.level.matrix[i][j]) in warpable:
                     self.level.holes.append((i, j))
 
     def enter_hole(self):
         current_space = int(self.level.matrix[self.y][self.x])
         if current_space in hole:
-            self.in_hole = True
             self.update_hole_list()
+            self.in_hole = True
 
     def exit_hole(self):
         self.in_hole = False

@@ -16,8 +16,8 @@ class Game:
         self.running = False
         self.fullscreen = False
         self.current_level = 'levels/level1.lvl'
-        self.level = Level(self.current_level)
         self.canvas = pygame.Surface((GRID_W * 32, GRID_H * 32))
+        self.level = Level(self.current_level, self.canvas)
         self.player = Player(self.level)
 
         self.color = (0, 0, 0)
@@ -25,12 +25,13 @@ class Game:
     def start(self):
         self.running = True
         hole_select_counter = 0
+        font = pygame.font.Font('fonts/DePixelSchmal.ttf', 30)
 
         while self.running:
             if self.player.change_level:
                 self.player.change_level = False
                 self.current_level = 'levels/level2.lvl'
-                self.level = Level(self.current_level)
+                self.level = Level(self.current_level, self.canvas)
                 self.player = Player(self.level)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -49,28 +50,29 @@ class Game:
                     if self.player.in_hole:
                         size = len(self.level.holes)
                         sel_y, sel_x = self.level.holes[hole_select_counter]
-                        self.level.matrix[sel_y][sel_x] = 2
+                        self.level.obj_matrix[sel_y][sel_x] = 3
 
                         if event.key == pygame.K_e:
-                            self.level.matrix[sel_y][sel_x] = 4
+                            self.level.obj_matrix[sel_y][sel_x] = 0
                             self.player.exit_hole()
 
                         if event.key == pygame.K_q:
                             self.player.teleport_hole(sel_x, sel_y)
+                            self.level.obj_matrix[sel_y][sel_x] = 0
                             hole_select_counter = 0 # needs to be recalculated because of the changing surrounding holes
                             size = len(self.level.holes)
 
                         if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
-                            self.level.matrix[sel_y][sel_x] = 4
+                            self.level.obj_matrix[sel_y][sel_x] = 0
                             hole_select_counter = (hole_select_counter + 1) % size
                             sel_y, sel_x = self.level.holes[hole_select_counter]
-                            self.level.matrix[sel_y][sel_x] = 2
+                            self.level.obj_matrix[sel_y][sel_x] = 3
 
                         if event.key == pygame.K_LEFT or event.key == pygame.K_a:
-                            self.level.matrix[sel_y][sel_x] = 4
+                            self.level.obj_matrix[sel_y][sel_x] = 0
                             hole_select_counter = (hole_select_counter - 1) if ((hole_select_counter - 1) > -1) else size - 1
                             sel_y, sel_x = self.level.holes[hole_select_counter]
-                            self.level.matrix[sel_y][sel_x] = 2
+                            self.level.obj_matrix[sel_y][sel_x] = 3
 
                     else:
                         if event.key == pygame.K_UP or event.key == pygame.K_w:
@@ -94,13 +96,19 @@ class Game:
                             self.player.x, self.player.y = (self.level.startX, self.level.startY)
 
             self.canvas.fill(self.color)
-            self.level.draw_level(self.canvas)
+            self.level.draw_level()
+            self.level.draw_text("I need to get home...", font, (255, 255, 255), 0,0)
             self.player.update(screen=self.canvas)
 
             center_x = (RESOLUTION[0] - self.level.width * 32) // 2
             center_y = (RESOLUTION[1] - self.level.height * 32) // 2
             self.screen.fill(color=(0,0,0))
+
             self.screen.blit(self.canvas, (center_x, center_y))
+
 
             pygame.display.update()
             self.clock.tick(60)
+
+game = Game()
+game.start()
