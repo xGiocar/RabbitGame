@@ -4,6 +4,8 @@ from level import Level
 from player import Player
 from sys import exit
 from settings import *
+from tile_types import blocked_items
+
 
 class Game:
     def __init__(self):
@@ -16,7 +18,7 @@ class Game:
         self.running = False
         self.fullscreen = False
         self.current_level = 'levels/level1.lvl'
-        self.canvas = pygame.Surface((GRID_W * 32, GRID_H * 32))
+        self.canvas = pygame.Surface((GRID_W * 64, GRID_H * 64))
         self.level = Level(self.current_level, self.canvas)
         self.player = Player(self.level)
 
@@ -28,9 +30,10 @@ class Game:
         font = pygame.font.Font('fonts/DePixelSchmal.ttf', 30)
 
         while self.running:
+            print(self.level.type)
             if self.player.change_level:
                 self.player.change_level = False
-                self.current_level = 'levels/level2.lvl'
+                self.current_level = 'levels/night_1.lvl'
                 self.level = Level(self.current_level, self.canvas)
                 self.player = Player(self.level)
             for event in pygame.event.get():
@@ -77,20 +80,45 @@ class Game:
                     else:
                         if event.key == pygame.K_UP or event.key == pygame.K_w:
                             self.player.last_direction = 'N'
-                            self.player.move(dy=-1)
+                            item_id = self.player.check_for_item(self.player.x, self.player.y - 1)
+                            if item_id not in blocked_items:
+                                self.player.move(dy=-1)
                         if event.key == pygame.K_DOWN or event.key == pygame.K_s:
                             self.player.last_direction = 'S'
-                            self.player.move(dy=1)
+                            item_id = self.player.check_for_item(self.player.x, self.player.y + 1)
+                            if item_id not in blocked_items:
+                                self.player.move(dy=1)
                         if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                             self.player.last_direction = 'V'
-                            self.player.move(dx=-1)
+                            item_id = self.player.check_for_item(self.player.x - 1, self.player.y)
+                            if item_id not in blocked_items:
+                                self.player.move(dx=-1)
                         if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                             self.player.last_direction = 'E'
-                            self.player.move(dx=1)
+                            item_id = self.player.check_for_item(self.player.x + 1, self.player.y)
+                            if item_id not in blocked_items:
+                                self.player.move(dx=1)
                         if event.key == pygame.K_e:
                             self.player.enter_hole()
                             self.player.dig_hole()
-                            self.player.eat_grass()
+                            if self.level.grass_limit > 0:
+                                if self.player.eat_grass():
+                                    self.level.grass_limit -= 1
+                        if event.key == pygame.K_LSHIFT and self.player.fruit_count > 0:
+
+                            match self.player.last_direction:
+                                case 'N':
+                                    self.player.move(dy=-2)
+                                    self.player.fruit_count -= 1
+                                case 'S':
+                                    self.player.move(dy=2)
+                                    self.player.fruit_count -= 1
+                                case 'E':
+                                    self.player.move(dx=2)
+                                    self.player.fruit_count -= 1
+                                case 'V':
+                                    self.player.move(dx=-2)
+                                    self.player.fruit_count -= 1
                         if event.key == pygame.K_r:
                             self.level.load_from_file(self.current_level)
                             self.player.x, self.player.y = (self.level.startX, self.level.startY)
@@ -100,8 +128,8 @@ class Game:
             self.level.draw_text("I need to get home...", font, (255, 255, 255), 0,0)
             self.player.update(screen=self.canvas)
 
-            center_x = (RESOLUTION[0] - self.level.width * 32) // 2
-            center_y = (RESOLUTION[1] - self.level.height * 32) // 2
+            center_x = (RESOLUTION[0] - self.level.width * 32 * SCALE_FACTOR) // 2
+            center_y = (RESOLUTION[1] - self.level.height * 32 * SCALE_FACTOR) // 2
             self.screen.fill(color=(0,0,0))
 
             self.screen.blit(self.canvas, (center_x, center_y))

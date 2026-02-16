@@ -6,16 +6,29 @@ from tile_types import *
 
 class Player:
     def __init__(self, level: Level):
-        self.sprite = pygame.image.load('assets/player_sprite.png')
+        self.sprite = pygame.image.load('assets/player_east.png')
         self.level = level
         self.x = level.startX
         self.y = level.startY
         self.in_hole = False
         self.last_direction = 'E'
         self.change_level = False
+        self.fruit_count = 0
 
     def update(self, screen: pygame.Surface):
-        screen.blit(self.sprite, (self.x * 32, self.y * 32))
+        match self.last_direction:
+            case 'E':
+                self.sprite = pygame.image.load('assets/player_east.png')
+            case 'V':
+                self.sprite = pygame.image.load('assets/player_west.png')
+            case 'N':
+                self.sprite = pygame.image.load('assets/player_east.png')
+            case 'S':
+                self.sprite = pygame.image.load('assets/player_west.png')
+        new_sprite = pygame.transform.scale_by(self.sprite, SCALE_FACTOR)
+        screen.blit(new_sprite, (self.x * 32 * SCALE_FACTOR, self.y * 32 * SCALE_FACTOR))
+
+
 
     def move(self, dx=0, dy=0):
         test_x = self.x + dx
@@ -33,18 +46,20 @@ class Player:
 
         self.x = test_x
         self.y = test_y
-        self.check_for_item()
+        self.check_for_item(self.x, self.y)
         self.check_for_tile()
 
-    def eat_grass(self):
+    def eat_grass(self) -> bool:
         current_space = int(self.level.matrix[self.y][self.x])
         if current_space in eatable:
-            self.level.matrix[self.y][self.x] = 3
+            self.level.matrix[self.y][self.x] = self.level.type * 10 + 3
+            return True
+        return False
 
     def dig_hole(self):
         current_space = int(self.level.matrix[self.y][self.x])
         if current_space in diggable:
-            self.level.matrix[self.y][self.x] = 4
+            self.level.matrix[self.y][self.x] = self.level.type * 10 + 4
 
     def update_hole_list(self):
         self.level.holes.clear()
@@ -67,11 +82,16 @@ class Player:
     def teleport_hole(self, x: int, y: int):
         self.x = x
         self.y = y
-        self.level.matrix[y][x] = 4
+        self.level.matrix[y][x] = self.level.type * 10 + 4
         self.update_hole_list()
 
-    def check_for_item(self):
-        item_id = int(self.level.obj_matrix[self.y][self.x])
+    def check_for_item(self, x, y) -> int:
+        if x < 0 or x >= self.level.width:
+            return
+        if y < 0 or y >= self.level.height:
+            return
+
+        item_id = int(self.level.obj_matrix[y][x])
         #debug
         font = pygame.font.SysFont("Arial", 36)
         text_surface = font.render(f"Current item: {item_id}", True, (0,0,0))
@@ -79,12 +99,15 @@ class Player:
 
         match item_id:
             case 0:
-                return
+                return 0
             case 1:
                 self.level.obj_matrix[self.y][self.x] = 0
-                self.x = self.x + 3
+                self.fruit_count += 1
             case 2:
                 self.change_level = True
+
+        return item_id
+
 
     def check_for_tile(self):
         tile_id = int(self.level.matrix[self.y][self.x])
