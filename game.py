@@ -4,7 +4,7 @@ from level import Level
 from player import Player
 from sys import exit
 from settings import *
-from tile_types import blocked_items
+from tile_types import blocked_items, level_list
 
 
 class Game:
@@ -17,9 +17,9 @@ class Game:
         self.clock = pygame.time.Clock()
         self.running = False
         self.fullscreen = False
-        self.current_level = 'levels/level1.lvl'
+        self.current_level = 0
         self.canvas = pygame.Surface((GRID_W * 64, GRID_H * 64))
-        self.level = Level(self.current_level, self.canvas)
+        self.level = Level(level_list[self.current_level], self.canvas)
         self.player = Player(self.level)
 
         self.color = (0, 0, 0)
@@ -27,14 +27,14 @@ class Game:
     def start(self):
         self.running = True
         hole_select_counter = 0
-        font = pygame.font.Font('fonts/DePixelSchmal.ttf', 30)
 
         while self.running:
-            print(self.level.type)
+            #print(self.level.text)
             if self.player.change_level:
                 self.player.change_level = False
-                self.current_level = 'levels/night_1.lvl'
-                self.level = Level(self.current_level, self.canvas)
+                self.current_level += 1
+                self.level = Level(level_list[self.current_level], self.canvas)
+                hole_select_counter = 0
                 self.player = Player(self.level)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -120,12 +120,11 @@ class Game:
                                     self.player.move(dx=-2)
                                     self.player.fruit_count -= 1
                         if event.key == pygame.K_r:
-                            self.level.load_from_file(self.current_level)
+                            self.level.load_from_file(level_list[self.current_level])
                             self.player.x, self.player.y = (self.level.startX, self.level.startY)
 
             self.canvas.fill(self.color)
             self.level.draw_level()
-            self.level.draw_text("I need to get home...", font, (255, 255, 255), 0,0)
             self.player.update(screen=self.canvas)
 
             center_x = (RESOLUTION[0] - self.level.width * 32 * SCALE_FACTOR) // 2

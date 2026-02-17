@@ -12,10 +12,13 @@ class Level:
         self.matrix = []
         self.obj_matrix = []
         self.holes = []
-        self.load_from_file(path)
+        self.font = pygame.font.Font('fonts/DePixelSchmal.ttf', 30)
         self.screen = screen
         self.type = 0
+        self.text = []
+
         self.load_from_file(path)
+
 
 
 
@@ -44,6 +47,10 @@ class Level:
                 row = list(line.split())
                 self.obj_matrix.append(row)
 
+            for line in lvl_file:
+                text_info = line.strip().split('#')
+                self.text.append(text_info)
+
     def draw_level(self):
         for i in range(self.height):
             for j in range(self.width):
@@ -59,6 +66,9 @@ class Level:
                 self.screen.blit(tile, (j * 32 * SCALE_FACTOR, i * 32 * SCALE_FACTOR))
                 if obj_texture != 0:
                     self.screen.blit(item, (j * 32 * SCALE_FACTOR, i * 32 * SCALE_FACTOR))
+
+        for text_info in self.text:
+            self.draw_text(text_info[0], self.font, (255,255,255), int(text_info[1]), int(text_info[2]))
 
     def draw_text(self, text: str, font: pygame.font.Font, color, x, y):
         img = font.render(text, True, color)
