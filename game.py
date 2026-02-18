@@ -17,7 +17,7 @@ class Game:
         self.clock = pygame.time.Clock()
         self.running = False
         self.fullscreen = False
-        self.current_level = 0
+        self.current_level = 5
         self.canvas = pygame.Surface((GRID_W * 64, GRID_H * 64))
         self.level = Level(level_list[self.current_level], self.canvas)
         self.player = Player(self.level)
@@ -30,9 +30,18 @@ class Game:
 
         while self.running:
             #print(self.level.text)
-            if self.player.change_level:
-                self.player.change_level = False
-                self.current_level += 1
+            item = self.player.change_level
+            if self.player.change_level != -1:
+                self.player.change_level = -1
+                match item:
+                    case 16:
+                        # self.current_level = 11
+                        pass
+                    case 20 | 21 | 22 | 23:
+                        self.current_level = 5
+                    case _:
+                        self.current_level += 1
+                    
                 self.level = Level(level_list[self.current_level], self.canvas)
                 hole_select_counter = 0
                 self.player = Player(self.level)

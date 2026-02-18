@@ -12,19 +12,22 @@ class Player:
         self.y = level.startY
         self.in_hole = False
         self.last_direction = 'E'
-        self.change_level = False
+        self.change_level = -1
         self.fruit_count = 0
 
     def update(self, screen: pygame.Surface):
-        match self.last_direction:
-            case 'E':
-                self.sprite = pygame.image.load('assets/player_east.png')
-            case 'V':
-                self.sprite = pygame.image.load('assets/player_west.png')
-            case 'N':
-                self.sprite = pygame.image.load('assets/player_east.png')
-            case 'S':
-                self.sprite = pygame.image.load('assets/player_west.png')
+        if self.in_hole:
+            self.sprite = pygame.image.load('assets/player_in_hole.png')
+        else:
+            match self.last_direction:
+                case 'E':
+                    self.sprite = pygame.image.load('assets/player_east.png')
+                case 'V':
+                    self.sprite = pygame.image.load('assets/player_west.png')
+                case 'N':
+                    self.sprite = pygame.image.load('assets/player_north.png')
+                case 'S':
+                    self.sprite = pygame.image.load('assets/player_south.png')
         new_sprite = pygame.transform.scale_by(self.sprite, SCALE_FACTOR)
         screen.blit(new_sprite, (self.x * 32 * SCALE_FACTOR, self.y * 32 * SCALE_FACTOR))
 
@@ -74,6 +77,7 @@ class Player:
         current_space = int(self.level.matrix[self.y][self.x])
         if current_space in hole:
             self.update_hole_list()
+
             self.in_hole = True
 
     def exit_hole(self):
@@ -87,25 +91,22 @@ class Player:
 
     def check_for_item(self, x, y) -> int:
         if x < 0 or x >= self.level.width:
-            return
+            return -1
         if y < 0 or y >= self.level.height:
-            return
+            return -1
 
         item_id = int(self.level.obj_matrix[y][x])
-        #debug
-        font = pygame.font.SysFont("Arial", 36)
-        text_surface = font.render(f"Current item: {item_id}", True, (0,0,0))
-        self.level.screen.blit(text_surface, (0, 0))
 
         match item_id:
             case 0:
                 return 0
-            case 1:
+            case 1 | 19:
                 self.level.obj_matrix[self.y][self.x] = 0
                 self.fruit_count += 1
-            case 2:
-                self.change_level = True
-
+            case 2 | 12 | 16 | 20 | 21 | 22 | 23 | 24:
+                self.change_level = int(item_id)
+        # self.change level determines the action the game will do when the player touches an item
+        # the Game class checks if the change level is different from -1, if so it changes level depending on the item
         return item_id
 
 
