@@ -11,6 +11,7 @@ class Player:
         self.x = level.startX
         self.y = level.startY
         self.in_hole = False
+        self.slipping = False
         self.last_direction = 'E'
         self.change_level = -1
         self.fruit_count = 0
@@ -103,22 +104,63 @@ class Player:
             case 1 | 19:
                 self.level.obj_matrix[self.y][self.x] = 0
                 self.fruit_count += 1
-            case 2 | 12 | 16 | 20 | 21 | 22 | 23 | 24:
+            case 2 | 12 | 16 | 20 | 21 | 22 | 23:
                 self.change_level = int(item_id)
         # self.change level determines the action the game will do when the player touches an item
         # the Game class checks if the change level is different from -1, if so it changes level depending on the item
+            case 24:
+                match self.last_direction:
+                    case 'N':
+                        if self.valid_tile(self.y - 2, self.x):
+                            # pushes the object to the next position
+                            self.level.obj_matrix[self.y - 2][self.x] = self.level.obj_matrix[self.y - 1][self.x]
+                            self.level.obj_matrix[self.y - 1][self.x] = 0
+                        else: self.move(dy=+1)
+                    case 'S':
+                        if self.valid_tile(self.y + 2, self.x):
+                            self.level.obj_matrix[self.y + 2][self.x] = self.level.obj_matrix[self.y + 1][self.x]
+                            self.level.obj_matrix[self.y + 1][self.x] = 0
+                        else: self.move(dy=-1)
+                    case 'V':
+                        if self.valid_tile(self.y, self.x - 2):
+                            self.level.obj_matrix[self.y][self.x - 2] = self.level.obj_matrix[self.y][self.x - 1]
+                            self.level.obj_matrix[self.y][self.x - 1] = 0
+                        else: self.move(dx=+1)
+                    case 'E':
+                        if self.valid_tile(self.y, self.x + 2):
+                            self.level.obj_matrix[self.y][self.x + 2] = self.level.obj_matrix[self.y][self.x + 1]
+                            self.level.obj_matrix[self.y][self.x + 1] = 0
+                        else: self.move(dx=-1)
         return item_id
+
+    def valid_tile(self, y: int, x: int) -> bool:
+        if y >= self.level.height or y < 0:
+            return False
+        if x >= self.level.width or x < 0:
+            return False
+        if int(self.level.obj_matrix[y][x]) != 0:
+            return False
+
+        return True
 
 
     def check_for_tile(self):
         tile_id = int(self.level.matrix[self.y][self.x])
         if tile_id in slippery:
+            self.slipping = True
             match self.last_direction:
                 case 'N':
-                    self.move(dy=-1)
+                    if self.valid_tile(self.y - 1, self.x):
+                        self.move(dy=-1)
                 case 'S':
-                    self.move(dy=1)
+                    if self.valid_tile(self.y + 1, self.x):
+                        self.move(dy=1)
                 case 'V':
-                    self.move(dx=-1)
+                    if self.valid_tile(self.y, self.x - 1):
+                        self.move(dx=-1)
                 case 'E':
-                    self.move(dx=1)
+                    if self.valid_tile(self.y, self.x + 1):
+                        self.move(dx=1)
+
+        else:
+            self.slipping = False

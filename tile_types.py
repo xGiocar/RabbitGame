@@ -16,7 +16,7 @@ tiles = {
             15: 'summer_bugs_grass.png',
             16: 'summer_water_flow.png',
             17: 'fall_grass.png',
-            18: '',
+            18: 'winter_hole',
             19: '',
             20: '',
             21: '',
@@ -44,12 +44,13 @@ items = {
             15: 'spring_bush.png',
             16: 'summer_door.png',
             17: 'summer_bush.png',
-            18: 'summer_bush.png',
+            18: 'fall_bush.png',
             19: 'fall_fruit.png',
             20: 'carrot.png',
             21: 'letter_A.png',
             22: 'letter_R.png',
             23: 'letter_A.png',
+            24: 'summer_fruit.png',
         }
 
 eatable = [1, 6, 8, 9]
@@ -59,7 +60,7 @@ warpable = [3, 4, 13, 14, 23, 24]
 unpassable = [5]
 slippery = [7]
 
-blocked_items = [4, 5, 6, 7, 8, 9, 10, 13, 14, 15]
+blocked_items = [4, 5, 6, 7, 8, 9, 10, 13, 14, 15, 17, 18]
 
 level_list = [
     'levels/night_1.lvl',
@@ -68,5 +69,11 @@ level_list = [
     'levels/night_4.lvl',
     'levels/night_5.lvl',
     'levels/lobby.lvl',
-    'levels/spring_1.lvl'
+    'levels/spring_1.lvl',
+    'levels/spring_2.lvl',
+    'levels/spring_3.lvl',
+    'levels/spring_4.lvl',
+    'levels/spring_5.lvl',
 ]
+
+music_list = ["spring.mp3", "night.mp3"]

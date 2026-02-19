@@ -17,7 +17,7 @@ class Game:
         self.clock = pygame.time.Clock()
         self.running = False
         self.fullscreen = False
-        self.current_level = 5
+        self.current_level = 6
         self.canvas = pygame.Surface((GRID_W * 64, GRID_H * 64))
         self.level = Level(level_list[self.current_level], self.canvas)
         self.player = Player(self.level)
@@ -41,7 +41,7 @@ class Game:
                         self.current_level = 5
                     case _:
                         self.current_level += 1
-                    
+
                 self.level = Level(level_list[self.current_level], self.canvas)
                 hole_select_counter = 0
                 self.player = Player(self.level)
@@ -117,17 +117,21 @@ class Game:
 
                             match self.player.last_direction:
                                 case 'N':
-                                    self.player.move(dy=-2)
-                                    self.player.fruit_count -= 1
+                                    if self.player.valid_tile(self.player.y - 2, self.player.x):
+                                        self.player.move(dy=-2)
+                                        self.player.fruit_count -= 1
                                 case 'S':
-                                    self.player.move(dy=2)
-                                    self.player.fruit_count -= 1
+                                    if self.player.valid_tile(self.player.y + 2, self.player.x):
+                                        self.player.move(dy=2)
+                                        self.player.fruit_count -= 1
                                 case 'E':
-                                    self.player.move(dx=2)
-                                    self.player.fruit_count -= 1
+                                    if self.player.valid_tile(self.player.y, self.player.x + 2):
+                                        self.player.move(dx=2)
+                                        self.player.fruit_count -= 1
                                 case 'V':
-                                    self.player.move(dx=-2)
-                                    self.player.fruit_count -= 1
+                                    if self.player.valid_tile(self.player.y, self.player.x - 2):
+                                        self.player.move(dx=-2)
+                                        self.player.fruit_count -= 1
                         if event.key == pygame.K_r:
                             self.level.load_from_file(level_list[self.current_level])
                             self.player.x, self.player.y = (self.level.startX, self.level.startY)

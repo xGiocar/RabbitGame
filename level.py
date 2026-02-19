@@ -1,5 +1,5 @@
 import pygame
-
+import threading
 from settings import SCALE_FACTOR
 from tile_types import *
 
@@ -73,3 +73,11 @@ class Level:
     def draw_text(self, text: str, font: pygame.font.Font, color, x, y):
         img = font.render(text, True, color)
         self.screen.blit(img, (x, y))
+
+    def play_music(self):
+        song = "assets/music/"
+        match self.type:
+            case 0:
+                song += "spring.mp3"
+            case 1:
+                song += "night.mp3"
