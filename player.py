@@ -32,8 +32,6 @@ class Player:
         new_sprite = pygame.transform.scale_by(self.sprite, SCALE_FACTOR)
         screen.blit(new_sprite, (self.x * 32 * SCALE_FACTOR, self.y * 32 * SCALE_FACTOR))
 
-
-
     def move(self, dx=0, dy=0):
         test_x = self.x + dx
         test_y = self.y + dy
@@ -67,11 +65,16 @@ class Player:
 
     def update_hole_list(self):
         self.level.holes.clear()
+        x = self.x
+        y = self.y
+        self.level.holes.append((y, x))
         for i in range(self.y - MAX_DIGGABLE_DIST, self.y + MAX_DIGGABLE_DIST + 1):
             for j in range(self.x - MAX_DIGGABLE_DIST, self.x + MAX_DIGGABLE_DIST + 1):
                 if i < 0 or i >= self.level.height or j < 0 or j >= self.level.width:
                     continue
                 if int(self.level.matrix[i][j]) in warpable:
+                    if i == x and j == y:
+                        continue
                     self.level.holes.append((i, j))
 
     def enter_hole(self):
@@ -104,11 +107,11 @@ class Player:
             case 1 | 19:
                 self.level.obj_matrix[self.y][self.x] = 0
                 self.fruit_count += 1
-            case 2 | 12 | 16 | 20 | 21 | 22 | 23:
+            case 2 | 12 | 16 | 20 | 21 | 22 | 23 | 26 | 27:
                 self.change_level = int(item_id)
         # self.change level determines the action the game will do when the player touches an item
         # the Game class checks if the change level is different from -1, if so it changes level depending on the item
-            case 24:
+            case 25:
                 match self.last_direction:
                     case 'N':
                         if self.valid_tile(self.y - 2, self.x):
@@ -139,6 +142,8 @@ class Player:
         if x >= self.level.width or x < 0:
             return False
         if int(self.level.obj_matrix[y][x]) != 0:
+            return False
+        if int(self.level.matrix[y][x]) in unpassable:
             return False
 
         return True

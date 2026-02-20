@@ -17,28 +17,58 @@ class Game:
         self.clock = pygame.time.Clock()
         self.running = False
         self.fullscreen = False
-        self.current_level = 6
+        self.current_level = 18
         self.canvas = pygame.Surface((GRID_W * 64, GRID_H * 64))
         self.level = Level(level_list[self.current_level], self.canvas)
         self.player = Player(self.level)
+        self.letters = [False, False, False, False]
 
         self.color = (0, 0, 0)
+
+    def fill_letters(self):
+        if self.current_level != 5:
+            return
+
+        if self.letters[0]:
+            self.level.obj_matrix[1][6] = 20
+        if self.letters[1]:
+            self.level.obj_matrix[2][6] = 21
+        if self.letters[2]:
+            self.level.obj_matrix[1][8] = 22
+        if self.letters[3]:
+            self.level.obj_matrix[2][8] = 21
+
+
 
     def start(self):
         self.running = True
         hole_select_counter = 0
 
         while self.running:
-            #print(self.level.text)
+            #print(self.player.fruit_count)
+            self.fill_letters()
             item = self.player.change_level
             if self.player.change_level != -1:
                 self.player.change_level = -1
                 match item:
                     case 16:
-                        # self.current_level = 11
-                        pass
-                    case 20 | 21 | 22 | 23:
+                        self.current_level = 11
+                    case 20:
                         self.current_level = 5
+                        self.letters[0] = True
+                    case 21:
+                        self.current_level = 5
+                        self.letters[1] = True
+                    case 22:
+                        self.current_level = 5
+                        self.letters[2] = True
+                    case 23:
+                        self.current_level = 5
+                        self.letters[3] = True
+                    case 26:
+                        self.current_level = 16
+                    case 27:
+                        self.current_level = 21
                     case _:
                         self.current_level += 1
 
@@ -114,24 +144,23 @@ class Game:
                                 if self.player.eat_grass():
                                     self.level.grass_limit -= 1
                         if event.key == pygame.K_LSHIFT and self.player.fruit_count > 0:
-
                             match self.player.last_direction:
                                 case 'N':
                                     if self.player.valid_tile(self.player.y - 2, self.player.x):
                                         self.player.move(dy=-2)
-                                        self.player.fruit_count -= 1
+                                        self.player.fruit_count -= 2
                                 case 'S':
                                     if self.player.valid_tile(self.player.y + 2, self.player.x):
                                         self.player.move(dy=2)
-                                        self.player.fruit_count -= 1
+                                        self.player.fruit_count -= 2
                                 case 'E':
                                     if self.player.valid_tile(self.player.y, self.player.x + 2):
                                         self.player.move(dx=2)
-                                        self.player.fruit_count -= 1
+                                        self.player.fruit_count -= 2
                                 case 'V':
                                     if self.player.valid_tile(self.player.y, self.player.x - 2):
                                         self.player.move(dx=-2)
-                                        self.player.fruit_count -= 1
+                                        self.player.fruit_count -= 2
                         if event.key == pygame.K_r:
                             self.level.load_from_file(level_list[self.current_level])
                             self.player.x, self.player.y = (self.level.startX, self.level.startY)

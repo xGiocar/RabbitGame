@@ -5,7 +5,7 @@ tiles = {
             4: 'spring_burrow.png',
             5: 'spring_water_flow.gif',
             6: 'spring_flower_grass.gif',
-            7: 'mud_tile.bmp',
+            7: 'mud.png',
             8: 'night_grass.png',
             9: 'night_fireflies.png',
             10: 'summer_grass.png',
@@ -17,12 +17,24 @@ tiles = {
             16: 'summer_water_flow.png',
             17: 'fall_grass.png',
             18: 'winter_hole',
-            19: '',
-            20: '',
+            19: 'night_grass.png',
+            20: 'fall_leaves_grass.png',
             21: '',
             22: '',
             23: 'summer_dirt.png',
             24: 'summer_burrow.png',
+            25: 'water.png',
+            26: 'summer_water_N.png',
+            27: 'summer_water_S.png',
+            28: 'summer_water_W.png',
+            29: 'summer_water_E.png',
+            30: 'summer_water_NE.png',
+            31: 'summer_water_NW.png',
+            32: 'summer_water_SE.png',
+            33: 'fall_dirt.png',
+            34: 'fall_burrow.png',
+            35: 'summer_water_SW.png',
+
         }
 
 items = {
@@ -46,21 +58,24 @@ items = {
             17: 'summer_bush.png',
             18: 'fall_bush.png',
             19: 'fall_fruit.png',
-            20: 'carrot.png',
+            20: 'letter_L.png',
             21: 'letter_A.png',
             22: 'letter_R.png',
             23: 'letter_A.png',
-            24: 'summer_fruit.png',
+            24: 'empty_letter.png',
+            25: 'snowball.png',
+            26: 'fall_door.png',
+            27: 'winter_door.png'
         }
 
-eatable = [1, 6, 8, 9]
+eatable = [1, 6, 8, 9, 10, 15]
 diggable = []
-hole = [4, 14, 24]
-warpable = [3, 4, 13, 14, 23, 24]
-unpassable = [5]
+hole = [4, 14, 24, 34]
+warpable = [3, 4, 13, 14, 23, 24, 33, 34]
+unpassable = [5, 16, 19, 25, 26, 27, 28, 29, 30, 31, 32, 33]
 slippery = [7]
 
-blocked_items = [4, 5, 6, 7, 8, 9, 10, 13, 14, 15, 17, 18]
+blocked_items = [4, 5, 6, 7, 8, 9, 10, 13, 14, 15, 17, 18, 20, 21, 22, 23, 24]
 
 level_list = [
     'levels/night_1.lvl',
@@ -74,6 +89,21 @@ level_list = [
     'levels/spring_3.lvl',
     'levels/spring_4.lvl',
     'levels/spring_5.lvl',
+    'levels/summer_1.lvl',
+    'levels/summer_2.lvl',
+    'levels/summer_3.lvl',
+    'levels/summer_4.lvl',
+    'levels/summer_5.lvl',
+    'levels/fall_1.lvl',
+    'levels/fall_2.lvl',
+    'levels/fall_3.lvl',
+    'levels/fall_4.lvl',
+    'levels/fall_5.lvl',
+    'levels/winter_1.lvl',
+    'levels/winter_2.lvl',
+    'levels/winter_3.lvl',
+    'levels/winter_4.lvl',
+    'levels/winter_5.lvl',
 ]
 
 music_list = ["spring.mp3", "night.mp3"]
