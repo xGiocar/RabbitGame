@@ -16,7 +16,7 @@ tiles = {
             15: 'summer_bugs_grass.png',
             16: 'summer_water_flow.png',
             17: 'fall_grass.png',
-            18: 'winter_hole',
+            18: '',
             19: 'night_grass.png',
             20: 'fall_leaves_grass.png',
             21: '',
@@ -34,6 +34,12 @@ tiles = {
             33: 'fall_dirt.png',
             34: 'fall_burrow.png',
             35: 'summer_water_SW.png',
+            36: 'winter_grass.png',
+            37: 'winter_hole.png',
+            38: 'winter_hole_filled.png',
+            39: 'winter_roots_grass.png',
+            40: 'black.png',
+            41: 'tiles.png'
 
         }
 
@@ -56,7 +62,7 @@ items = {
             15: 'spring_bush.png',
             16: 'summer_door.png',
             17: 'summer_bush.png',
-            18: 'fall_bush.png',
+            18: 'fall_bush2.png',
             19: 'fall_fruit.png',
             20: 'letter_L.png',
             21: 'letter_A.png',
@@ -65,17 +71,21 @@ items = {
             24: 'empty_letter.png',
             25: 'snowball.png',
             26: 'fall_door.png',
-            27: 'winter_door.png'
+            27: 'winter_door.png',
+            28: 'winter_bush.png',
+            29: 'mysterious_door_half1_open.png',
+            30: 'mysterious_door_half2_open.png',
         }
 
-eatable = [1, 6, 8, 9, 10, 15]
+eatable = [1, 6, 8, 9, 10, 15, 17, 20]
 diggable = []
 hole = [4, 14, 24, 34]
 warpable = [3, 4, 13, 14, 23, 24, 33, 34]
-unpassable = [5, 16, 19, 25, 26, 27, 28, 29, 30, 31, 32, 33]
+unpassable = [5, 16, 19, 25, 26, 27, 28, 29, 30, 31, 32, 37]
 slippery = [7]
+fillable = [37]
 
-blocked_items = [4, 5, 6, 7, 8, 9, 10, 13, 14, 15, 17, 18, 20, 21, 22, 23, 24]
+blocked_items = [4, 5, 6, 7, 8, 9, 10, 13, 14, 15, 17, 18, 20, 21, 22, 23, 24, 28]
 
 level_list = [
     'levels/night_1.lvl',
@@ -104,6 +114,7 @@ level_list = [
     'levels/winter_3.lvl',
     'levels/winter_4.lvl',
     'levels/winter_5.lvl',
+    'levels/end.lvl'
 ]
 
 music_list = ["spring.mp3", "night.mp3"]

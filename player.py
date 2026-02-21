@@ -107,7 +107,7 @@ class Player:
             case 1 | 19:
                 self.level.obj_matrix[self.y][self.x] = 0
                 self.fruit_count += 1
-            case 2 | 12 | 16 | 20 | 21 | 22 | 23 | 26 | 27:
+            case 2 | 12 | 16 | 20 | 21 | 22 | 23 | 26 | 27 | 30:
                 self.change_level = int(item_id)
         # self.change level determines the action the game will do when the player touches an item
         # the Game class checks if the change level is different from -1, if so it changes level depending on the item
@@ -115,22 +115,26 @@ class Player:
                 match self.last_direction:
                     case 'N':
                         if self.valid_tile(self.y - 2, self.x):
+                            self.fill_hole(self.y - 2, self.x, 'N')
                             # pushes the object to the next position
                             self.level.obj_matrix[self.y - 2][self.x] = self.level.obj_matrix[self.y - 1][self.x]
                             self.level.obj_matrix[self.y - 1][self.x] = 0
                         else: self.move(dy=+1)
                     case 'S':
                         if self.valid_tile(self.y + 2, self.x):
+                            self.fill_hole(self.y + 2, self.x, 'S')
                             self.level.obj_matrix[self.y + 2][self.x] = self.level.obj_matrix[self.y + 1][self.x]
                             self.level.obj_matrix[self.y + 1][self.x] = 0
                         else: self.move(dy=-1)
                     case 'V':
                         if self.valid_tile(self.y, self.x - 2):
+                            self.fill_hole(self.y, self.x - 2, 'V')
                             self.level.obj_matrix[self.y][self.x - 2] = self.level.obj_matrix[self.y][self.x - 1]
                             self.level.obj_matrix[self.y][self.x - 1] = 0
                         else: self.move(dx=+1)
                     case 'E':
                         if self.valid_tile(self.y, self.x + 2):
+                            self.fill_hole(self.y, self.x + 2, 'E')
                             self.level.obj_matrix[self.y][self.x + 2] = self.level.obj_matrix[self.y][self.x + 1]
                             self.level.obj_matrix[self.y][self.x + 1] = 0
                         else: self.move(dx=-1)
@@ -143,10 +147,27 @@ class Player:
             return False
         if int(self.level.obj_matrix[y][x]) != 0:
             return False
+        if int(self.level.matrix[y][x]) in fillable:
+            return True
         if int(self.level.matrix[y][x]) in unpassable:
             return False
 
+
         return True
+
+    def fill_hole(self, y: int, x: int, d):
+        if int(self.level.matrix[y][x]) in fillable:
+            self.level.matrix[y][x] = 38
+            match d:
+                case 'N':
+                    self.level.obj_matrix[y + 1][x] = 0
+                case 'S':
+                    self.level.obj_matrix[y - 1][x] = 0
+                case 'V':
+                    self.level.obj_matrix[y][x + 1] = 0
+                case 'E':
+                    self.level.obj_matrix[y][x - 1] = 0
+
 
 
     def check_for_tile(self):

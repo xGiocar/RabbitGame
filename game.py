@@ -12,12 +12,14 @@ class Game:
         pygame.init()
         pygame.display.set_caption("Joc pentru iub")
         pygame.key.set_repeat(500, 200)
+        pygame_icon = pygame.image.load('assets/objects/carrot.png')
+        pygame.display.set_icon(pygame_icon)
 
         self.screen = pygame.display.set_mode((1280, 720))
         self.clock = pygame.time.Clock()
         self.running = False
         self.fullscreen = False
-        self.current_level = 18
+        self.current_level = 0
         self.canvas = pygame.Surface((GRID_W * 64, GRID_H * 64))
         self.level = Level(level_list[self.current_level], self.canvas)
         self.player = Player(self.level)
@@ -38,7 +40,14 @@ class Game:
         if self.letters[3]:
             self.level.obj_matrix[2][8] = 21
 
+        all_letters = True
+        for letter in self.letters:
+            if not letter:
+                all_letters = False
 
+        if all_letters:
+            self.level.obj_matrix[1][7] = 29
+            self.level.obj_matrix[2][7] = 30
 
     def start(self):
         self.running = True
@@ -69,6 +78,8 @@ class Game:
                         self.current_level = 16
                     case 27:
                         self.current_level = 21
+                    case 30:
+                        self.current_level = 26
                     case _:
                         self.current_level += 1
 
@@ -82,12 +93,11 @@ class Game:
                     exit()
 
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_f:
-                        self.fullscreen = not self.fullscreen
-                        if self.fullscreen:
-                            self.screen = pygame.display.set_mode((1920, 1200), pygame.FULLSCREEN)
-                        else:
-                            self.screen = pygame.display.set_mode((1280, 720))
+                    if event.key == pygame.K_ESCAPE and self.current_level > 5:
+                        self.current_level = 5
+                        self.level = Level(level_list[self.current_level], self.canvas)
+                        hole_select_counter = 0
+                        self.player = Player(self.level)
 
                     if self.player.in_hole:
                         size = len(self.level.holes)
@@ -179,5 +189,6 @@ class Game:
             pygame.display.update()
             self.clock.tick(60)
 
-game = Game()
-game.start()
+if __name__ == "__main__":
+    game = Game()
+    game.start()
